@@ -1,6 +1,6 @@
-# Frontend - Fullstack TT
+# Frontend - FullStack TT
 
-SPA en React + Vite + TypeScript con Redux Toolkit para el flujo de checkout de 5 pasos e integración local con backend.
+SPA built with **React + Vite + TypeScript** and **Redux Toolkit** for a 5-step checkout flow, integrated with the backend API (see [backend README](../backend/README.md) for API and deployment).
 
 ## Stack
 
@@ -15,91 +15,122 @@ SPA en React + Vite + TypeScript con Redux Toolkit para el flujo de checkout de 
 - React Hook Form + Zod + @hookform/resolvers
 - Vitest
 
-## Arquitectura
+## Architecture
 
-Se aplican dos enfoques complementarios:
+Two complementary approaches are used:
 
-- **Screaming Architecture** para organizar por dominio/flujo:
+- **Screaming Architecture** for domain/flow organization:
   - `src/processes/checkout`
   - `src/features/*`
   - `src/entities/*`
   - `src/shared/*`
-- **Atomic Design** para UI reusable:
+- **Atomic Design** for reusable UI:
   - `src/shared/ui/atoms`
   - `src/shared/ui/molecules`
   - `src/shared/ui/organisms`
   - `src/shared/ui/layouts`
-- `ThemeProvider` global con toggle persistido en UI para experiencia adaptable.
+- Global `ThemeProvider` with persisted toggle for an adaptable experience.
 
-## Flujo funcional
+```mermaid
+flowchart TB
+  subgraph Screaming[Screaming Architecture]
+    Processes[processes/checkout]
+    Features[features]
+    Entities[entities]
+    Shared[shared]
+  end
+  subgraph Atomic[Atomic Design]
+    Atoms[atoms]
+    Molecules[molecules]
+    Organisms[organisms]
+    Layouts[layouts]
+  end
+  Processes --> Features
+  Features --> Entities
+  Entities --> Shared
+  Shared --> Atomic
+```
 
-1. Producto (`/product`)
-2. Boton **Pay with credit card** en producto
-3. Modal/backdrop para datos de pago y entrega
-4. Resumen y pago (`/summary`)
-5. Estado final (`/status`) + retorno a producto con stock actualizado
+## User Flow
 
-Refinamientos UX aplicados:
+1. **Product** (`/product`)
+2. **Pay with credit card** button on product page
+3. **Modal/backdrop** for payment and delivery data
+4. **Summary** (`/summary`) and payment
+5. **Status** (`/status`) then return to product with updated stock
 
-- Validación por campo con feedback inline (errores por `touched`/submit).
-- Sanitización robusta por tipo de dato (regex + normalización de entrada).
-- Boton `Rellenar datos de prueba` para acelerar pruebas manuales.
-- Imágenes placeholder locales por producto con fallback visual robusto.
+Optional: “Fill test data” for manual testing; resilience via refresh recovery (reference, idempotency).
 
-## Integración local
+```mermaid
+flowchart LR
+  Product["Product page"] --> Pay["Pay with credit card"]
+  Pay --> Modal["Payment & delivery modal"]
+  Modal --> Summary["Summary"]
+  Summary --> Status["Status"]
+  Status --> Product
+```
 
-Backend esperado en:
+## Local Development
 
-- `http://localhost:3000/api/v1`
+Backend expected at `http://localhost:3000/api/v1`.
 
-Configura variables:
+1. Copy `.env.example` to `.env`
+2. Set `VITE_API_BASE_URL=http://localhost:3000/api/v1`
+3. Run the backend locally (see backend README)
 
-1. Copia `.env.example` a `.env`
-2. Ajusta:
-   - `VITE_API_BASE_URL=http://localhost:3000/api/v1`
+## Deployment and Integration
 
-## Seguridad y persistencia
+The frontend is deployed on **Vercel**; the backend runs on **Render**. The SPA uses rewrites so all routes serve `index.html`. CORS on the backend must allow the frontend origin.
 
-- Se persiste en `localStorage` solo draft seguro del checkout:
-  - `productId`, `quantity`, `customer`, `delivery`, `reference`, `idempotencyKey`
-- **No** se persiste PAN/CVV.
-- La información de tarjeta vive en estado volátil de aplicación.
+```mermaid
+flowchart LR
+  subgraph VercelDeploy[Vercel]
+    Build["pnpm build"]
+    Dist["dist"]
+    Build --> Dist
+  end
+  subgraph BackendDeploy[Backend]
+    Render[Render API]
+  end
+  Browser[Browser] --> VercelDeploy
+  VercelDeploy -->|"VITE_API_BASE_URL"| Render
+  Render -->|"CORS origin"| VercelDeploy
+```
 
-## Checklist de cumplimiento (MD + Integraciones)
-
-- `MD` - SPA en React + Redux Toolkit: cumplido.
-- `MD` - Flujo de 5 pasos: cumplido.
-- `MD` - Boton literal `Pay with credit card`: cumplido en `ProductPage`.
-- `MD` - Modal/backdrop para tarjeta y entrega: cumplido en `PaymentDeliveryModal`.
-- `MD` - UI moderna y profesional: cumplido con migración a Tailwind + shadcn y tema adaptativo.
-- `MD` - Resiliencia ante refresh: cumplido con recuperación de `reference` y `idempotencyKey`.
-- `MD` - Seguridad de datos sensibles: cumplido (sin persistencia de PAN/CVV).
-- `FRONTEND_INTEGRATIONS` - `GET /products`: integrado.
-- `FRONTEND_INTEGRATIONS` - `POST /checkout/preview`: integrado.
-- `FRONTEND_INTEGRATIONS` - `POST /transactions`: integrado con idempotency.
-- `FRONTEND_INTEGRATIONS` - `POST /transactions/:reference/pay`: integrado.
-- `FRONTEND_INTEGRATIONS` - `GET /transactions/:reference`: integrado (resumen/estado/recuperación).
-- `FRONTEND_INTEGRATIONS` - manejo de errores `400/404/429/5xx`: integrado con mapeo a mensajes UX.
-
-## Scripts
-
-- `pnpm dev`
-- `pnpm lint`
-- `pnpm build`
-- `pnpm test`
-- `pnpm test:cov`
-
-## Deploy on Vercel
+### Deploy on Vercel
 
 1. Import this repository in [Vercel](https://vercel.com) and create a new project.
 2. **Build Command:** `pnpm build` (or use root `vercel.json`).
 3. **Output Directory:** `dist` (Vite default).
-4. Add **Environment Variable:** `VITE_API_BASE_URL` = your backend API base URL (e.g. `https://your-app.onrender.com/api/v1`). Required so the frontend calls the deployed backend.
-5. Deploy; Vercel will run `pnpm install` and `pnpm build`.
+4. Add **Environment Variable:** `VITE_API_BASE_URL` = your backend API base URL (e.g. `https://your-app.onrender.com/api/v1`). Required so the frontend calls the deployed backend; ensure backend CORS allows your Vercel origin.
+5. Deploy; Vercel runs `pnpm install` and `pnpm build`.
 
-## Cobertura de pruebas
+## Security and Persistence
 
-Resultado actual:
+- Only a **safe draft** of the checkout is stored in `localStorage`: `productId`, `quantity`, `customer`, `delivery`, `reference`, `idempotencyKey`.
+- **PAN/CVV are not persisted.** Card data lives only in volatile application state.
 
-- `pnpm test:cov` supera el **80%** global.
-- Resultado vigente: `86.26%` statements, `76.02%` branches, `84.92%` functions, `87.39%` lines.
+## Scripts
+
+- `pnpm dev` — Development server
+- `pnpm lint` — Lint and fix
+- `pnpm build` — Production build
+- `pnpm test` — Unit tests
+- `pnpm test:cov` — Coverage (global threshold 80%)
+
+## Compliance and Integration Checklist
+
+- **SPA** in React + Redux Toolkit: done.
+- **5-step flow**: Product → Pay → Modal → Summary → Status: done.
+- **Literal “Pay with credit card”** button: done on Product page.
+- **Modal/backdrop** for card and delivery: done in PaymentDeliveryModal.
+- **Modern, professional UI**: Tailwind + shadcn and adaptive theme: done.
+- **Resilience on refresh**: recovery via `reference` and `idempotencyKey`: done.
+- **Sensitive data**: no PAN/CVV persistence: done.
+- **API integrations**: `GET /products`, `POST /checkout/preview`, `POST /transactions` (idempotency), `POST /transactions/:reference/pay`, `GET /transactions/:reference`: done.
+- **Error handling**: 400/404/429/5xx mapped to user-facing messages: done.
+
+## Test Coverage
+
+- `pnpm test:cov` meets the **80%** global threshold.
+- Current figures: statements, branches, functions, and lines as reported by Vitest.
