@@ -89,6 +89,14 @@ Configura variables:
 - `pnpm test`
 - `pnpm test:cov`
 
+## Deploy on Vercel
+
+1. Import this repository in [Vercel](https://vercel.com) and create a new project.
+2. **Build Command:** `pnpm build` (or use root `vercel.json`).
+3. **Output Directory:** `dist` (Vite default).
+4. Add **Environment Variable:** `VITE_API_BASE_URL` = your backend API base URL (e.g. `https://your-app.onrender.com/api/v1`). Required so the frontend calls the deployed backend.
+5. Deploy; Vercel will run `pnpm install` and `pnpm build`.
+
 ## Cobertura de pruebas
 
 Resultado actual:
