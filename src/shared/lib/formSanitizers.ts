@@ -1,21 +1,21 @@
 import { onlyDigits, sanitizeCardNumber, sanitizeCvc, sanitizeMonth, sanitizeYear } from './sanitizeCardInput'
 
-export function sanitizeText(value: string) {
+function sanitizeText(value: string) {
   return value.replaceAll(/\s+/g, ' ').trimStart()
 }
 
-export function sanitizeLetters(value: string) {
+function sanitizeLetters(value: string) {
   return value
     .replaceAll(/[^a-zA-Z\u00C0-\u017F\s'-]/g, '')
     .replaceAll(/\s+/g, ' ')
     .trimStart()
 }
 
-export function sanitizeAlphanumeric(value: string) {
+function sanitizeAlphanumeric(value: string) {
   return value.replaceAll(/[^a-zA-Z0-9-]/g, '').trim()
 }
 
-export function sanitizeAddress(value: string) {
+function sanitizeAddress(value: string) {
   return value
     .replaceAll(/[^a-zA-Z0-9\u00C0-\u017F\s#.,-]/g, '')
     .replaceAll(/\s+/g, ' ')
@@ -35,11 +35,11 @@ export function sanitizePhone(value: string) {
   return normalized.slice(0, 15)
 }
 
-export function sanitizePostalCode(value: string) {
+function sanitizePostalCode(value: string) {
   return value.replaceAll(/[^a-zA-Z0-9 -]/g, '').toUpperCase().slice(0, 10)
 }
 
-export function sanitizeCardHolder(value: string) {
+function sanitizeCardHolder(value: string) {
   return sanitizeLetters(value).toUpperCase().slice(0, 80)
 }
 

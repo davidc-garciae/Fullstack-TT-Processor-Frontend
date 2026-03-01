@@ -1,5 +1,14 @@
 # Frontend - FullStack TT
 
+[![React Doctor](https://www.react.doctor/share/badge?p=frontend&s=100&w=0&f=0)](https://www.react.doctor/share?p=frontend&s=100&w=0&f=0)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![pnpm](https://img.shields.io/badge/pnpm-10.11-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.0-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 SPA built with **React + Vite + TypeScript** and **Redux Toolkit** for a 5-step checkout flow, integrated with the backend API (see [backend README](../backend/README.md) for API and deployment).
 
 ## Stack

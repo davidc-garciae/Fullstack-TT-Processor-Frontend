@@ -3,7 +3,7 @@ import type { Delivery } from '../../../entities/delivery/model/types'
 import type { TransactionStatus } from '../../../entities/transaction/model/types'
 import { apiRequest } from '../client'
 
-export type CreateTransactionRequest = {
+type CreateTransactionRequest = {
   productId: string
   quantity: number
   idempotencyKey: string
@@ -11,12 +11,12 @@ export type CreateTransactionRequest = {
   delivery: Delivery
 }
 
-export type CreateTransactionResponse = {
+type CreateTransactionResponse = {
   reference: string
   status: TransactionStatus
 }
 
-export type PayTransactionRequest = {
+type PayTransactionRequest = {
   cardNumber: string
   cvc: string
   expMonth: string
@@ -26,13 +26,13 @@ export type PayTransactionRequest = {
   email: string
 }
 
-export type PayTransactionResponse = {
+type PayTransactionResponse = {
   reference: string
   status: TransactionStatus
   processorStatus?: string | null
 }
 
-export type TransactionStatusResponse = {
+type TransactionStatusResponse = {
   reference: string
   status: TransactionStatus
   processorStatus?: string | null

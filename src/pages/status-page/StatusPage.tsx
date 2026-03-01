@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { setPaymentStatus } from '../../processes/checkout/model/checkout.slice'
 import { selectCheckout } from '../../processes/checkout/model/checkout.selectors'
@@ -12,12 +12,36 @@ import { Alert } from '../../shared/ui/atoms/Alert'
 import { Badge } from '../../shared/ui/ui/badge'
 import { CheckoutLayout } from '../../shared/ui/layouts/CheckoutLayout'
 
+type StatusPageState = {
+  totalAmountCents: number | null
+  error: string
+}
+
+const initialState: StatusPageState = {
+  totalAmountCents: null,
+  error: '',
+}
+
+type StatusPageAction =
+  | { type: 'LOAD_SUCCESS'; totalAmountCents: number }
+  | { type: 'LOAD_ERROR'; error: string }
+
+function statusPageReducer(state: StatusPageState, action: StatusPageAction): StatusPageState {
+  switch (action.type) {
+    case 'LOAD_SUCCESS':
+      return { ...state, totalAmountCents: action.totalAmountCents }
+    case 'LOAD_ERROR':
+      return { ...state, error: action.error }
+    default:
+      return state
+  }
+}
+
 export function StatusPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const checkout = useAppSelector(selectCheckout)
-  const [totalAmountCents, setTotalAmountCents] = useState<number | null>(null)
-  const [error, setError] = useState('')
+  const [state, dispatchState] = useReducer(statusPageReducer, initialState)
 
   useEffect(() => {
     if (!checkout.reference) {
@@ -26,13 +50,12 @@ export function StatusPage() {
     }
 
     async function loadStatus() {
-      setError('')
       try {
         const response = await getTransactionStatus(checkout.reference!)
-        setTotalAmountCents(response.totalAmountCents)
+        dispatchState({ type: 'LOAD_SUCCESS', totalAmountCents: response.totalAmountCents })
         dispatch(setPaymentStatus(response.status))
       } catch (err) {
-        setError(toUserMessage(err))
+        dispatchState({ type: 'LOAD_ERROR', error: toUserMessage(err) })
       }
     }
 
@@ -49,10 +72,12 @@ export function StatusPage() {
         Estado:
         <Badge variant={statusVariant}>{mappedStatus.label}</Badge>
       </div>
-      {totalAmountCents !== null && (
-        <p className="text-sm text-muted-foreground">Total procesado: {formatMoney(totalAmountCents)}</p>
+      {state.totalAmountCents !== null && (
+        <p className="text-sm text-muted-foreground">
+          Total procesado: {formatMoney(state.totalAmountCents)}
+        </p>
       )}
-      {error && <Alert>{error}</Alert>}
+      {state.error && <Alert>{state.error}</Alert>}
       <Link className="text-sm font-medium underline underline-offset-4" to="/product">
         Volver al producto
       </Link>

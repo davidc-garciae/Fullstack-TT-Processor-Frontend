@@ -1,6 +1,6 @@
 import { apiRequest } from '../client'
 
-export type ProductDto = {
+type ProductDto = {
   id: string
   name: string
   description: string

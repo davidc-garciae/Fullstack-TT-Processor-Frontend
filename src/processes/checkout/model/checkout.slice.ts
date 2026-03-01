@@ -14,7 +14,7 @@ export type PaymentDraft = {
   email: string
 }
 
-export type CheckoutPreview = {
+type CheckoutPreview = {
   currency: string
   productAmountCents: number
   baseFeeCents: number
@@ -22,7 +22,7 @@ export type CheckoutPreview = {
   totalAmountCents: number
 }
 
-export type CheckoutState = {
+type CheckoutState = {
   selectedProduct?: Product
   productId?: string
   quantity: number
@@ -35,7 +35,7 @@ export type CheckoutState = {
   status?: TransactionStatus
 }
 
-export const initialCheckoutState: CheckoutState = {
+const initialCheckoutState: CheckoutState = {
   quantity: 1,
 }
 

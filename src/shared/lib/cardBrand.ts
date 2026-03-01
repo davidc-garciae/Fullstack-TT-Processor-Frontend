@@ -1,4 +1,4 @@
-export type CardBrand = 'VISA' | 'MASTERCARD' | 'UNKNOWN'
+type CardBrand = 'VISA' | 'MASTERCARD' | 'UNKNOWN'
 
 export function getCardBrand(cardNumber: string): CardBrand {
   const digits = cardNumber.replace(/\D/g, '')

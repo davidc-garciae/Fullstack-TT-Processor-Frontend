@@ -1,11 +1,11 @@
 import { apiRequest } from '../client'
 
-export type PreviewCheckoutRequest = {
+type PreviewCheckoutRequest = {
   productId: string
   quantity: number
 }
 
-export type PreviewCheckoutResponse = {
+type PreviewCheckoutResponse = {
   productId: string
   quantity: number
   currency: string
